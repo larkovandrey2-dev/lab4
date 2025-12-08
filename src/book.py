@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import UserDict, UserList
 
 class Book:
     def __init__(self, title, author, year, genre, isbn):
@@ -25,8 +25,11 @@ class EBook(Book):
 
 
 class BookCollection:
-    def __init__(self):
-        self.books = []
+    def __init__(self, initial_data = None):
+        if initial_data:
+            self.books = UserList(initial_data)
+        else:
+            self.books = UserList()
     def add_book(self, book):
         self.books.append(book)
     def remove_book(self, book):
@@ -40,28 +43,45 @@ class BookCollection:
         for book in self.books:
             yield book
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            subset = self.books[index]
+            return BookCollection(subset)
         return self.books[index]
     def __repr__(self):
         return f"BookCollection: {self.books}"
 class IndexDict:
     def __init__(self):
-        self.isbn = {}
-        self.authors = defaultdict(list)
-        self.years = defaultdict(list)
+        self.isbn = UserDict()
+        self.authors = UserDict()
+        self.years = UserDict()
     def add_book(self, book):
         self.isbn[book.isbn] = book
-        self.authors[book.author].append(book)
-        self.years[book.year].append(book)
+        if book.author not in self.authors:
+            self.authors[book.author] = BookCollection()
+        self.authors[book.author].add_book(book)
+        if book.year not in self.years:
+            self.years[book.year] = BookCollection()
+        self.years[book.year].add_book(book)
     def remove_book(self, book):
         if book.isbn not in self.isbn:
             return f"The book {book} is not in the collection"
         del self.isbn[book.isbn]
-        self.authors[book.author].remove(book)
-        self.years[book.year].remove(book)
+        if book.author in self.authors:
+            self.authors[book.author].remove_book(book)
+            if len(self.authors[book.author]) == 0:
+                del self.authors[book.author]
+        if book.year in self.years:
+            self.years[book.year].remove_book(book)
+            if len(self.years[book.year]) == 0:
+                del self.years[book.year]
     def search_by_author(self, author):
-        return self.authors[author]
+        if author in self.authors:
+            return self.authors[author]
+        return BookCollection()
     def search_by_year(self, year):
-        return self.years[year]
+        if year in self.years:
+            return self.years[year]
+        return BookCollection()
     def __getitem__(self, index):
         return self.isbn[index]
     def __iter__(self):
