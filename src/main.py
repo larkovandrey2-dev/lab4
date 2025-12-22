@@ -9,6 +9,10 @@ GENRES = ["Fiction", "Sci-Fi", "Fantasy", "History", "Education", "Thriller"]
 
 
 def generate_random_book() -> Book:
+    """
+    Генерирует случайный объект книги (PaperBook или EBook)
+    со случайными атрибутами.
+    """
     title = f"{random.choice(TITLES_ADJ)} {random.choice(TITLES_NOUN)}"
     author = random.choice(AUTHORS)
     year = random.randint(1900, 2025)
@@ -24,6 +28,11 @@ def generate_random_book() -> Book:
 
 
 def run_simulation(steps: int = 20, seed: int | None = None) -> None:
+    """
+    Запускает псевдослучайную симуляцию работы библиотеки.
+    :param steps: Количество шагов (событий) симуляции.
+    :param seed: Зерно генератора случайных чисел для воспроизводимости результатов.
+    """
     if seed is not None:
         random.seed(seed)
         print(f"ЗАПУСК СИМУЛЯЦИИ (Seed: {seed})")
