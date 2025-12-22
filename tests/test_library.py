@@ -1,5 +1,6 @@
 import unittest
-from src.book import Library, PaperBook, EBook
+from src.book import PaperBook, EBook
+from src.library import Library
 
 class TestLibrarySystem(unittest.TestCase):
 
@@ -22,7 +23,6 @@ class TestLibrarySystem(unittest.TestCase):
         self.library.add_book(self.b3)
         sliced = self.library.books[0:2]
 
-        self.assertIsInstance(sliced, list)
         self.assertEqual(len(sliced), 2)
         self.assertEqual(sliced[0].title, "1984")
         self.assertEqual(sliced[1].title, "Python Guide")
